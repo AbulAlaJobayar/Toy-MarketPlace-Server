@@ -39,6 +39,14 @@ const result= await toyCollection.find().toArray();
 res.send(result)
 });
 
+app.get('/alltoyes', async(req,res)=>{
+  const result= await dataCollection.find({}).toArray();
+  res.send(result);
+})
+app.get('/mytoys/:email',async(req,res)=>{
+  const result= await dataCollection.find({selleremail:req.params.email}).toArray();
+  res.send(result);
+})
 
 app.post('/postdata', async(req,res)=>{
   const  body= req.body;
