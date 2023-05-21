@@ -22,9 +22,26 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
+    await client.connect();
     const toyCollection = client.db("assingment11").collection("hometoy");
     const dataCollection = client.db("assingment11").collection("alldata");
+
+    const indexKeys = { toyName: 1, category: 1 }; // Replace field1 and field2 with your actual field names
+    const indexOptions = { name: "titleCategory" }; // Replace index_name with the desired index name
+    const result = await dataCollection.createIndex(indexKeys, indexOptions);
+    console.log(result);
+    app.get("/getJobsByText/:text", async (req, res) => {
+      const text = req.params.text;
+      const result = await dataCollection
+        .find({
+          $or: [
+            { toyName: { $regex: text, $options: "i" } },
+            { category: { $regex: text, $options: "i" } },
+          ],
+        })
+        .toArray();
+      res.send(result);
+    });
 
     app.get("/homedata", async (req, res) => {
       const result = await toyCollection.find().toArray();
